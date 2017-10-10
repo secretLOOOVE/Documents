@@ -1,3 +1,3 @@
 # Documents
 my Documents
-record something in case of forget
+record something in case of lost
