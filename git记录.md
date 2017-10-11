@@ -1,4 +1,4 @@
-### git介绍以及一些常用命令，加上vim编辑器的简单使用
+z## git介绍以及一些常用命令，加上vim编辑器的简单使用
 
 **git的功能特性**
 
@@ -117,5 +117,16 @@
 	1 从本地删除一个分支： git branch -d <分支名称>
 	
 	2 同步到GitHub上面删除这个分支： git push <本地仓库名> :<GitHub端分支>""""""""
+
+### 修改git远程库push方式为ssh
+	
+	查看使用的传输协议：  
+	git remote -v
+
+	重新设置成ssh的方式：
+	git remote rm origin
+	git remote add origin git@github.com:username/repository.git
+	git push -u origin master
+
 
 
