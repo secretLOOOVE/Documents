@@ -248,4 +248,33 @@ z## git介绍以及一些常用命令，加上vim编辑器的简单使用
 	i、比较两个历史版本之间的差异
 		git diff SHA1 SHA2
 
+### git常用命令
+
+	Local：
+	git clone git@github.com:xiahouzuoxin/mp3-encode.git        # 在本地克隆一个github上仓库
+	git status                    # 获得当前项目的一个状况
+	git commit -a              # 将修改文件（不包括新创建的文件）添加到索引，并提交到仓库
+	git add [file]                # 添加文件到本地索引
+	git branch                  # 获得当前仓库中所有分支列表
+	git branch zx-branch                # 新建本地一个名为zx-branch的分支，主分支名为master
+	git branch -D branch_name     # 删除名称为branch-name的本地分支
+	git checkout master                  # 切回主分支，切换到zx-branch只需要将master改成zx-branch
+	git log                                        # 查看提交日志，有许多附加参数
+		git log -p                               # 显示补丁
+		git log --stat                          # 日志统计：那些文件修改了，修改了多少行内容
+		git log --graph                       # 使日志看上去更漂亮
+	git diff master..zx-branch           # 比较两个分支之间差异
+	git remote rm origin                   #  删除origin变量地址
+
+	git branch [name]                 # 创建本地分支，注意新分支创建后不会自动切换为当前分支
+	git checkout [name]              # 切换到name分支
+	git checkout -b [name]          # 创建name分支并切换到name分支
+
+	git merge [name]                  # 将name分支与当前分支合并，name可以是远程分支，如origin/master
+
+	Remote:
+	git push origin [name]          # 创建远程name分支
+	git push origin:zx-branch      # 删除远程origin仓库地址的zx-branch分支 
+	git branch -r                         # 获得当前仓库中所有分支列表，即查看远程分支
+
 
