@@ -294,17 +294,110 @@ a descriptive name.
 需要说明的是，为防止用户在不经意的情况下用cp命令破坏另一个文件，如用户指定的目标文件名已存在，用cp命令拷贝文件后，这个文件就会被新源文件覆盖，因此，建议用户在使用cp命令拷贝文件时，最好使用i选项。
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+###  Linux下怎样检查、如何查看某软件包是否已经安装？
+
+	因为linux安装软件的方式比较多，所以没有一个通用的办法能查到某些软件是否安装了。总结起来就是这样几类：
+
+	1、rpm包安装的，可以用rpm -qa看到，如果要查找某软件包是否安装，用 rpm -qa | grep “软件或者包的名字”。
+
+	[root@hexuweb102 ~] rpm -qa | grep ruby
+
+	2、以deb包安装的，可以用dpkg -l能看到。如果是查找指定软件包，用dpkg -l | grep “软件或者包的名字”；
+
+	[root@hexuweb102 ~] dpkg -l | grep ruby
+
+	3、yum方法安装的，可以用yum list installed查找，如果是查找指定包，命令后加 | grep “软件名或者包名”；
+
+	[root@hexuweb102 ~] yum list installed | grep ruby
+
+	4、如果是以源码包自己编译安装的，例如.tar.gz或者tar.bz2形式的，这个只能看可执行文件是否存在了，
+
+	上面两种方法都看不到这种源码形式安装的包。如果是以root用户安装的，可执行程序通常都在/sbin:/usr/bin目录下。
+
+	说明：
+
+	其中rpm yum Redhat系linux的软件包管理命令，dpkg debian系列的软件包管理命令   
+		
+		
+		
+### Linux 查找已安装软件的方法
+
+	1.rpm
+
+	注意rpm区分大小写
+
+	查询已安装的以mysql开头的包
+
+	rpm  -qa mysql*
+
+	查询已安装的mysql 包
+
+	rpm -qa|grep mysql
+
+	 
+
+	rpm的方法有时候也所有已安装的包
+
+	 
+
+	2.yum
+
+	列出指定包的所有情况
+
+	yum list package
+
+	 
+
+	yum list | grep installed
+
+	 
+
+	3.whereis
+
+	有时候可以借助查找文件的方式找到对应包的路径
+
+	例如whereis mysql
+
+	 
+
+	4.find
+
+	可以使用find查找文件的所在路径
+
+	find 查找路径 查找参数
+
+	在根目录下查找以.conf结尾的文件
+	find / -name *.conf
+	 
+
+	5.locate
+
+	locate的功能和find类似
+
+	locate 查找的文件
+	查找所有路径下的mysql文件
+
+	locate mysql
+
+	 
+
+	6.ps
+
+	可以通过查找进程的方法找到对应的包的路径
+
+	ps -ef|grep mysql
+
+	可以简写成
+
+	pgrep mysql
+
+		
+			
+			
+			
+			
+			
+			
+			
+			
+			
