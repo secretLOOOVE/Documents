@@ -1191,4 +1191,24 @@ a descriptive name.
 	losetup /dev/loop0 /abc.iso
 	mount /dev/loop0 /media
 
+### grep -q用于if逻辑判断
+
+	grep -q用于if逻辑判断
+	 
+	突然发现grep -q 用于if 逻辑判断很好用。
+	 
+	-q 参数，本意是 Quiet; do not write anything to standard output.  Exit immediately with zero status if any match is found, even if an error was detected.   中文意思为，安静模式，不打印任何标准输出。如果有匹配的内容则立即返回状态值0。
+	 
+	小应用
+	 
+	# cat a.txt
+	nihao 
+	nihaooo
+	hello
+	 
+	#  if  grep -q hello a.txt ; then echo yes;else echo no; fi 
+	yes
+	# if grep -q word a.txt; then echo yes; else echo no; fi
+	no
+
 
