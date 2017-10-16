@@ -1183,4 +1183,12 @@ a descriptive name.
 	结束语
 	尽管文件系统的实现并不复杂，但它是可伸缩和可扩展的体系结构的好例子。文件系统体系结构已经发展了许多年，并成功地支持了许多不同类型的文件系统和许多目标存储设备类型。由于使用了基于插件的体系结构和多层的函数间接性，Linux 文件系统在近期的发展很值得关注。
 
+### UBUNTU中/dev/loop0是什么意思
+
+	回环文件，非物理设备中创建的文件系统，如iso,img... 
+	mount -o loop  abc.iso /media
+	等于
+	losetup /dev/loop0 /abc.iso
+	mount /dev/loop0 /media
+
 
