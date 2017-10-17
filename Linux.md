@@ -1191,4 +1191,85 @@ a descriptive name.
 	losetup /dev/loop0 /abc.iso
 	mount /dev/loop0 /media
 
+### grep -q用于if逻辑判断
+
+	grep -q用于if逻辑判断
+	 
+	突然发现grep -q 用于if 逻辑判断很好用。
+	 
+	-q 参数，本意是 Quiet; do not write anything to standard output.  Exit immediately with zero status if any match is found, even if an error was detected.   中文意思为，安静模式，不打印任何标准输出。如果有匹配的内容则立即返回状态值0。
+	 
+	小应用
+	 
+    # cat a.txt
+	nihao 
+	nihaooo
+	hello
+	 
+    #  if  grep -q hello a.txt ; then echo yes;else echo no; fi 
+	yes
+    # if grep -q word a.txt; then echo yes; else echo no; fi
+	no
+
+###	Linux中打开ISO文件的两种方法
+
+	方法一、Linux下用mount挂载命令
+
+	在网上下载的软件盘是iso格式的，不刻成光盘就可以读取里面的文件。不用解压。
+
+	在终端用mount -o loop /mnt/*/1.iso /mnt/cdrom 命令，(其中*是你工具盘放置的路径)。
+
+	输入命令后，打开我的电脑——〉打开CD-ROM就能看到里面的文件了。运行install或者 autorun。
+
+	当提示charudi二张光盘时，键入命令umount /mnt/cdrom 。
+
+	然后再键入mount -o loop /mnt/*/2.iso/mnt/cdrom(把第一条命令的文件名的1改成2，就是第二张光盘的名字了)。这样再回车。等待就可以了。
+
+	取消挂载用umount /mnt/cdrom
+
+
+	方法二、在Linux下使用虚拟光驱
+
+	其实根本不需要什么虚拟光驱软件，用mount命令就可以完成。
+
+	1. 把光盘制作成iso文件
+
+	cp /dev/cdrom XXXXX.iso
+
+	XXXXX.iso为你所命名的镜像文件。执行此命令之后就可以将整个光盘制作成iso文件。XXXXX.iso前你可以加上路径哦。
+
+	2.将硬盘上的iso文件加载到光盘(或者说虚拟光驱)。
+
+	mount -t iso9660 -o loop /*/XXXXX.iso /mnt/iso
+
+	3.如果是安装系统盘所提供的文件，如添加删除程序，系统可能会提示你插入光盘，但我们没有光盘，只有镜像，怎么办？
+
+	对于RedHat，先 mount iso,然后执行
+
+	redhat-install-packages --isodir=/mnt/iso
+
+	4.一般情况虚拟光驱
+
+	rm -rf /dev/cdrom #删除光驱
+
+	ln /dev/loop7 /dev/cdrom
+
+	losetup /dev/loop7 /*/XXXXX.iso
+
+	mount /mnt/cdrom
+
+	然后你再看看iso文件，是不是变成了虚拟光驱？
+
+	5.取消这个光驱：
+
+	losetup -d /dev/loop7
+
+	换盘的话：
+
+	只需转移iso关联到/dev/loop
+
+	losetup /dev/loop7 /*/XXXXX.iso
+
+	注：/*为路径，可能要在/mnt/下先建个名为cdrom的文件夹
+
 
