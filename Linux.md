@@ -1474,3 +1474,27 @@ a descriptive name.
 	$tr “[0*4]” “*”< input.txt
 
 
+### Shell下常用字符 
+
+	#--注释行
+	;--命令分隔符，可以用来在一行中执行多个命令 echo hello; echo  good
+	;; 终止"case"选项.
+	   1 case "$variable" in
+	   2 abc) echo "\$variable = abc" ;;
+	   3 xyz) echo "\$variable = xyz" ;;
+	   4 esac
+	source . http://www.cnblogs.com/softwaretesting/archive/2012/02/13/2349550.html
+
+	: 空命令,等价于"NOP"(no op,一个什么也不干的命令).也可以被认为与shell 的内建命令
+	(true)作用相同.":"命令是一
+	个 bash 的内建命令,它的返回值为0,就是shell 返回的true.
+	如:
+	1 :
+	2 echo $? # 0
+
+	${} 参数替换,见9.3 节.
+	$*,$@ 位置参数
+	$? 退出状态变量.$?保存一个命令/一个函数或者脚本本身的退出状态.
+	$$ 进程ID 变量.这个$$变量保存运行脚本进程ID
+
+
