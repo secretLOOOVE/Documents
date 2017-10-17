@@ -1201,11 +1201,11 @@ a descriptive name.
 	 
 	小应用
 	 
-    # cat a.txt
+	# cat a.txt
 	nihao 
 	nihaooo
 	hello
-	 
+
     #  if  grep -q hello a.txt ; then echo yes;else echo no; fi 
 	yes
     # if grep -q word a.txt; then echo yes; else echo no; fi
