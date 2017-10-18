@@ -1793,3 +1793,127 @@ a descriptive name.
 	7、*.tar.Z 用tar –xZf 解压
 	8、*.rar 用 unrar e解压
 	9、*.zip 用 unzip 解压
+
+
+### Linux DISPLAY作用
+
+	在Linux/Unix类操作系统上, DISPLAY用来设置将图形显示到何处. 直接登陆图形界面或者登陆命令行界面后使用startx启动图形, DISPLAY环境变量将自动设置为:0:0, 此时可以打开终端, 输出图形程序的名称(比如xclock)来启动程序, 图形将显示在本地窗口上, 在终端上输入printenv查看当前环境变量, 输出结果中有如下内容:
+
+	DISPLAY=:0.0
+
+	使用xdpyinfo可以查看到当前显示的更详细的信息.
+
+	DISPLAY 环境变量格式如下hostname: displaynumber.screennumber,我们需要知道，在某些机器上，可能有多个显示设备共享使用同一套输入设备，例如在一台PC上连接两台CRT显示器，但是它们只共享使用一个键盘和一个鼠标。这一组显示设备就拥有一个共同的displaynumber，而这组显示设备中的每个单独的设备则拥有自己单独的 screennumber。displaynumber和screennumber都是从零开始的数字。这样，对于我们普通用户来说， displaynumber、screennumber就都是0。 hostname指Xserver所在的主机主机名或者ip地址, 图形将显示在这一机器上, 可以是启动了图形界面的Linux/Unix机器, 也可以是安装了Exceed, X-Deep/32等Windows平台运行的Xserver的Windows机器. 如果Host为空, 则表示Xserver运行于本机, 并且图形程序(Xclient)使用unix socket方式连接到Xserver, 而不是TCP方式. 使用TCP方式连接时, displaynumber为连接的端口减去6000的值, 如果displaynumber为0, 则表示连接到6000端口; 使用unix socket方式连接时则表示连接的unix socket的路径, 如果displaynumber为0, 则表示连接到/tmp/.X11-unix/X0 . screennumber则几乎总是0.
+
+	如果使用su username或者su - username切换到别的用户, 并且使用命令
+
+	export DISPLAY=:0.0
+
+	设置DISPLAY环境变量, 运行图形程序(如xclock)时会收到如下错误:
+
+	Xlib: connection to ":0.0" refused by server
+	Xlib: No protocol specified
+
+	Error: Can't open display: :0.0
+
+	这是因为Xserver默认情况下不允许别的用户的图形程序的图形显示在当前屏幕上. 如果需要别的用户的图形显示在当前屏幕上, 则应以当前登陆的用户, 也就是切换身份前的用户执行如下命令
+
+	xhost +
+
+	这个命令将允许别的用户启动的图形程序将图形显示在当前屏幕上.
+
+	在2台Linux机器之间, 如果设置服务器端配置文件/etc/ssh/sshd_config中包含
+
+	X11Forwarding no
+
+	客户端配置文件/etc/ssh/ssh_config包含
+
+	ForwardX11 yes
+
+	则从客户端ssh到服务器端后会自动设置DISPLAY环境变量, 允许在服务器端执行的图形程序将图形显示在客户端上. 在服务器上查看环境变量显示如下(这个结果不同的时候并不相同)
+
+	DISPLAY=localhost:10.0
+
+	在客户机上用netstat -lnp可以看到有程序监听了6010端口
+
+	tcp 0 0 127.0.0.1:6010 0.0.0.0:* LISTEN 4827/1
+
+	如果希望允许远程机器上的图形程序将图形显示在本地机器的Xserver上, 除了要设置远端机器的DISPLAY环境变量以外, 还需要设置本地机器的Xserver监听相应的TCP端口. 而现在的Linux系统出于安全的考虑, 默认情况下不再监听TCP端口. 可通过修改/etc/X11/xinit/xserverrc文件, 将
+
+	exec /usr/bin/X11/X -dpi 100 -nolisten tcp
+
+	修改为
+
+	exec /usr/bin/X11/X -dpi 100
+
+	允许在直接使用startx启动图形时启动对TCP端口的监听.
+
+	修改/etc/kde3/kdm/kdmrc, 将
+
+	ServerArgsLocal=-nolisten tcp
+
+	修改为
+
+	ServerArgsLocal=
+
+	允许kdm作为显示管理器时, 启动会话时监听相应的TCP端口.
+
+	修改/etc/gdm/gdm.conf, 在[Security]一节增加
+
+	DisallowTCP=false
+
+	或者在登陆窗口选择"Options" -> "Configure Login Manager..."的Security页面, 取消"Deny TCP connections to Xserver", 允许gdm作为显示管理器时, 启动会话时监听相应的TCP端口.
+
+	文章出处：http://www.diybl.com/course/6_system/linux/Linuxjs/2008825/137565.html
+
+	附：
+
+	有如下几种方法：
+	1.rlogin、rsh等r系列命令。因为有较大的安全隐患，所以现在基本上废弃不用。 所以这里也不作详细介绍
+
+	2.telnet。telnet在linux和windows下均可用，只要打开相应的服务即可。telnet 的所有数据在网络上都是明文传输，所以也有安全隐患，在实际的生产系统中也基本上废弃不用，而转用更安全的ssh。但是在某些场合，如内部局域网络，telnet 还是有用武之地的。telnet使用方法：例如想连接到主机foobar上
+	telnet foobar
+	也可以直接使用ip：
+	telnet ip-of-foobar
+	之后输入用户名和口令之后就连接到了foobar上
+
+	3.ssh。ssh和telnet类似，但是数据在网络上是加密后再传输的。
+	http: //www.linuxaid.com.cn/engineer/brimmer/html/ssh.htm
+	这个链接的文章讲得很全面，比我写的好:)
+
+	4.远程X。这利用了X Window窗口系统的网络透明性，即，图形程序的运行和显示 可以在不同的主机上。这里首先要澄清两个概念，即X Server和X Client。假设 xclock程序在主机A上运行，但是显示在主机B上，那么谁是X Server，谁又是X Client呢？A是X Server，B是X Client？错！正确的答案是，应用程序xclock是X Client，主机B是X Server。为什么呢？Server是提供“资源”的一方，而Client是使用“资源”的一方。对于窗口系统来说，“资源”就是显示资源和输入设备，如显示器，键盘，鼠标等。主机B提供了这些资源，而应用程序xclock请求使用这些资 源，所以说xclock是X Client，主机B是X Server（更确切的说，应该是主机B上的 某个应用程序，例如/usr/X11R6/bin/X，他控制着B上这些硬件资源的分配和管理）。搞清楚了X Client和X Server的概念后，再来看一个重要的环境变量： DISPLAY，它指定了一个显示设备，所有的图形程序都将把自己显示到这个设备上。DISPLAY的格式为：hostname:displaynumber.screennumber。hostname是一个主机名，或者是它的ip地址。为了理解后面的displaynumber和screennumber，我们需要知道，在某些机器上，可能有多个显示设备共享使用同一套输入设备，例如在一台PC上连接两台CRT显示器，但是它们只共享使用一个键盘和一个鼠标。这一组显示设备就拥有一个共同的displaynumber，而这组显示设备中的每个单独的设备则拥有自己单独的screennumber。displaynumber和screennumber都是从零开始的数字。这样，对于我们普通用户来说，displaynumber、screennumber就都是0。 hostname可以省略（但它后面的冒号不能省略），如果省略的话，则使用本机作为默认的hostname，即:m.n等价于localhost:m.n。现在我们已经掌握了所有使用远程X的必需知识，如果我们想在远程主机A上运行gimp程序，但是把它的显示输出到 本地主机B的屏幕上好供我操作的话，需要依次执行以下步骤：
+	1).在B上启动一个X Server程序
+	2).在A上设定适当的DISPLAY变量，例如：export DISPLAY=B:0.0
+	3).在A上启动gimp
+	PS：
+	1).如果无法使用A的物理控制台的话，例如A、B的物理距离很遥远，可以使用 telnet、ssh等方法远程登录A来执行第2、3两步，没有任何区别。
+	2).注意，因为gimp是在B上显示的，或者说它使用的是B上的X Server，所以A上完 全不需要运行着一个X Server，甚至根本不安装也没有任何关系。
+	3).注意，并没有要求B一定使用Linux或者UNIX操作系统，只要在他上面运行一个X Server即可。Linux下使用的X Server一般为XFree86，是一个免费的开源X Server。微软的windows下也有可用的X Server，例如X-Win32,Hummingbird Exceed等，但它们多为商业软件。
+
+	你可能注意到了一个问题，按照前面所述，似乎可以把一个X图形程序显示到网络 中任何一个X Server上，这样必将造成混乱。所以，X Window系统提供了权限控制 命令xhost，可以控制哪些机器能使用我这个X Server。xhost的使用很简单，如果允许主机foo使用我这个X Server，可以使用"xhost +foo"；如果不允许主机foo使 用我这个X Server，可以使用"xhost -foo"；如果允许任何主机使用我这个X Server，简单的"xhost +"即可；反之，"xhost -"将禁止任何主机使用我这个X Server。更进一步的使用可以参考xhost(1)。
+
+	4.vnc（Virtual Network Computing）。VNC也是C/S架构的东东，但是有一个比较特殊的地方值得注意，如果你在会话A中打开一个vnc server，那么vnc client连接上来后也会使用会话A，换句话说，vnc不会开启新的会话。这样导致的最直接后 果是，如果你是在一个X会话中开启的vnc server，那么你会发现，你在本机上的 动作（例如移动鼠标、新开窗口等等）会如实的反映到vnc client那里，而同样 的，如果在vnc client中移动鼠标，你会发现本机屏幕上的鼠标也会相应的移动。
+	linux下的vnc server程序叫做vncserver,client程序叫做vncviewer。首先启动 server：
+	[leona@Ash]$ vncserver
+
+	You will require a password to access your desktops.
+
+	Password:
+	Verify:
+
+	New 'Ash:1 (leona)' desktop is Ash:1
+
+	Creating default startup script /home/leona/.vnc/xstartup
+	Starting applications specified in /home/leona/.vnc/xstartup
+	Log file is /home/leona/.vnc/Ash:2.log
+
+	vncserver会告诉你一个标志符，也就是
+	New 'Ash:1 (leona)' desktop is Ash:1
+	这一行中的"Ash:1","Ash"是运行vncserver的主机的主机名，换成相应的ip地址也没有问题；"1"可以认为是启动的vncserver的序号（实际上是X Window的 displaynumber）（可以同时启动多个vncserver）。如果是第一次启动 vncserver，他会要求你设置一个口令，vnc client在连接这个server时必须提供 这个口令。这个口令在将来可以使用vncpasswd命令来修改。server成功启动后就可以使用vnc client来连接了。连接时必须提供目标server的标志符，也就是前面 所说的"Ash:1":
+	[leona@Ash]$ vncviewer Ash:1
+	接着提供口令后就进入了会话。
+	如果想关闭一个vncserver，可以用命令vncserver -kill :id，这里的id就是 vncserver的序号。
+
+	windows下也有vnc server和vnc client（见附件）。在安装时可以把vnc server 注册为系统服务。他的使用和在linux下类似，这里就不赘述。只是有一个地方需 要注意，windows下vnc server的标志符序号字段为0，不会为其他值。
+
+	5.rdesktop。这是linux下的一个工具包，可以连接Microsoft Windows NT, Windows 2000 的终端服务（Terminal Services）,以及Windows XP的远程桌面服 务（Remote Desktop）。它的使用很简单，这里以连接Windows XP的远程桌面服务为例。首先在XP下启用远程桌面服务（注意，XP的HomeEdition没有远程桌面服务）：右键点击我的电脑，选择属性，查看“远程”tab页，勾选“允许用户远程连接到这台计算机”，然后一路点击“确定”即可。现在在linux机器上执行rdesktop hostname（在此之前请确定已经启动X Window窗口系统），其中hostname为 windows机器的主机名或者ip地址。现在，你就可以登录使用windows机器了。
