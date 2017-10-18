@@ -1599,3 +1599,44 @@ a descriptive name.
 	　　(4)有时可能要安装运行SGID的软件系统,该软件系统需要建立一个新组. 
 
 	　　要 增加一个新组,必须编辑该文件,为新组加一个入口项. 由于用户登录时,系统从/etc/passwd文件中取GID,而不是从/etc/group中 取GID,所以group文件和口令文件应当具有一致性.对于一个用户的小组,UID和 GID应当是相同的.多用户小组的GID应当不同于任何用户的UID,一般为5位数,这 样在查看/etc/passwd文件时,就可根据5位数据的GID识别多用户小组,这将减少 增加新组,新用户时可能产生的混淆. 
+
+### 关于/dev/null及用途
+
+	把/dev/null看作"黑洞". 它非常等价于一个只写文件. 所有写入它的内容都会永远丢失. 而尝试从它那儿读取内容则什么也读不到. 然而, /dev/null对命令行和脚本都非常的有用.
+
+	禁止标准输出.
+
+	1 cat $filename >/dev/null
+	   2 # 文件内容丢失，而不会输出到标准输出.
+	禁止标准错误
+
+	1 rm $badname 2>/dev/null
+	   2 #           这样错误信息[标准错误]就被丢到太平洋去了.
+	禁止标准输出和标准错误的输出.
+
+	1 cat $filename 2>/dev/null >/dev/null
+	   2 # 如果"$filename"不存在，将不会有任何错误信息提示.
+	   3 # 如果"$filename"存在, 文件的内容不会打印到标准输出.
+	   4 # 因此Therefore, 上面的代码根本不会输出任何信息.
+	   5 # 当只想测试命令的退出码而不想有任何输出时非常有用。
+	   6 #-----------测试命令的退出 begin ----------------------#
+	   7 # ls dddd 2>/dev/null 8 
+	   8 # echo $?    //输出命令退出代码：0为命令正常执行，1-255为有出错。  
+	   9 #-----------测试命令的退出 end-----------#  
+	   10# cat $filename &>/dev/null 
+	   11 #   也可以, 由 Baris Cicek 指出.
+	清除日志文件内容
+
+	1 cat /dev/null > /var/log/messages
+	   2 #  : > /var/log/messages   有同样的效果, 但不会产生新的进程.（因为:是内建的）
+	   3 
+	   4 cat /dev/null > /var/log/wtmp
+	例子 28-1. 隐藏cookie而不再使用
+
+	1 if [ -f ~/.netscape/cookies ]  # 如果存在则删除.
+	   2 then
+	   3   rm -f ~/.netscape/cookies
+	   4 fi
+	   5 
+	   6 ln -s /dev/null ~/.netscape/cookies
+	   7 # 现在所有的cookies都会丢入黑洞而不会保存在磁盘上了.
