@@ -1623,7 +1623,7 @@ a descriptive name.
 	   7 # ls dddd 2>/dev/null 8 
 	   8 # echo $?    //输出命令退出代码：0为命令正常执行，1-255为有出错。  
 	   9 #-----------测试命令的退出 end-----------#  
-	   10# cat $filename &>/dev/null 
+	   10 # cat $filename &>/dev/null 
 	   11 #   也可以, 由 Baris Cicek 指出.
 	清除日志文件内容
 
@@ -1640,3 +1640,90 @@ a descriptive name.
 	   5 
 	   6 ln -s /dev/null ~/.netscape/cookies
 	   7 # 现在所有的cookies都会丢入黑洞而不会保存在磁盘上了.
+
+
+### shell中$*与$@的区别
+
+	shell中$*与$@的区别
+
+	$*
+	所有的位置参数,被作为一个单词.
+	注意:"$*"必须被""引用.
+	$@
+	与$*同义,但是每个参数都是一个独立的""引用字串,这就意味着参数被完整地传递,
+	并没有被解释和扩展.这也意味着,每个参数列表中的每个参数都被当成一个独立的
+	单词.
+	注意:"$@"必须被引用.
+	$@ $* 只在被双引号包起来的时候才会有差异
+	双引号括起来的情况：
+	$*将所有的参数认为是一个字段
+	$@以IFS（默认为空格）来划分字段，如果空格在“”里面，不划分。采用LS的脚本运行./test 1 "2 3" 4   来发现差异
+
+	没有括起来的情况是$@和$*一样的，见到IFS就划分字段。还是采用LS的脚本运行./test 1 "2 3" 4   来发现差异
+	一个小例子 ，仅供参考
+
+	```
+	:#!/bin/bash
+	echo
+
+	index=1
+
+	echo "Listing args with\"\$*\":"
+	for arg in "$*"
+
+	do
+	   echo "Arg #$index=$arg"
+	   let "index+=1"
+
+	done
+
+	echo "所有的参数被认为是一个单词"
+
+	echo
+
+	index=1
+
+	echo "Listing args with \"\$@\":"
+	for arg in "$@"
+	do
+	echo "Arg #$index=$arg"
+	let "index+=1"
+	done
+
+	echo "所有的参数被认为是各个独立的单词"
+
+	echo
+
+	index=1
+
+	echo "Listing args with \$* (未被引用):"
+	for arg in $*
+	do
+	echo "Arg #$index=$arg"
+	let "index+=1"
+	done
+	echo "所有的参数被认为是各个独立的单词"
+
+	exit 0
+	```
+	运行后输出为
+
+	[Copy to clipboard] [ - ]CODE:[root@localhost ABS]# ./test 1 2 3 4
+
+	Listing args with"$*":
+	Arg #1=1 2 3 4
+	所有的参数被认为是一个单词
+
+	Listing args with "$@":
+	Arg #1=1
+	Arg #2=2
+	Arg #3=3
+	Arg #4=4
+	所有的参数被认为是各个独立的单词
+
+	Listing args with $* (未被引用):
+	Arg #1=1
+	Arg #2=2
+	Arg #3=3
+	Arg #4=4
+	所有的参数被认为是各个独立的单词
