@@ -318,9 +318,86 @@ shell控制GPIO
 	行，安Ctrl+X退出编辑，输入Y保存内容，然后重启即可。
 	 
 
+### I2Ctool
 
-		
+	一、启动I2C        执行如下命令进行树莓派配置
+	sudo raspi-config
 
-		
-		
-		
+	选择Advanced Options  -> I2C ->yes   启动i2C内核驱动
+	运行lsmod命令查看i2c时候启动
+
+	除了启动i2c内核驱动外，还需修改配置文件，运行如下命令打开配置文件。
+	sudo nano /etc/modules
+
+	增加以下两行并保存退出。
+	i2c-bcm2708
+	i2c-dev
+
+	二、i2c-tools
+	安装i2c-tools，这个工具在I2c硬件监控设备识别和故障诊断是非常重要。
+	sudo apt-get install i2c-tools
+
+	【i2c-tools官网】http://www.lm-sensors.org/wiki/i2cToolsDocumentation
+
+	I2c-tools仅有四条命令，下面逐条介绍。
+	1、i2c-tool查询i2c设备：
+	sudo apt-get install i2c-tools
+	i2cdetect -y 1
+	-y        代表取消用户交互过程，直接执行指令；
+	1         代表I2C总线编号；
+
+	上图是树莓派接上Pioneer 600扩展板检测到的i2C设备，
+	0x20是PCF8974 IO扩展芯片的地址，
+	0x48是PCF8591 AD/DA转换芯片的地址
+	0x68是DS3231 RTC时钟芯片的地址
+	0x77是BMP180压强传感器的地址
+	2、扫描寄存器内容：
+	i2cdump -y 1 0x68
+
+	-y        代表取消用户交互过程，直接执行指令；
+	1         代表I2C总线编号；
+	0x68    代表I2C设备从机地址，此处表示DS3231 RTC时钟芯片
+
+	3、寄存器内容写入：
+	i2cset -y 1 0x68 0x00 0x13
+
+		-y        代表曲线用户交互过程，直接执行指令
+		1         代表I2C总线编号
+		0x68    代表I2C设备地址，此处表示DS3231 RTC时钟芯片
+		0x00    代表存储器地址，
+		0x13    代表存储器地址中的具体内容
+	4、寄存器内容读出：
+	i2cget -y 1 0x68 0x00
+
+	   -y        代表曲线用户交互过程，直接执行指令
+		1         代表I2C总线编号
+		0x68     代表I2C设备地址，此处表示DS3231 RTC时钟芯片
+		0x00    代表存储器地址
+	三、使用i2c-tools控制PCF8574 IO
+	PCF8574是I2C总线8位IO扩展芯片，初始状态IO为高电平. PCF8574和其他I2C芯片不同，该芯片没有寄存器，直接传输一个字节即控制IO输出状态。Pioneer 600扩展板，LED2接到PCF8574的p4管脚。低电平点亮LED.
+	写IO管脚:
+	i2cset –y 1 0x20 0xEF
+
+	0x20   代表I2C设备地址，此处表示PCF8574芯片
+	0xEF  传输的内容，此处表示PCF8574的P4管脚输出低电平，其他管脚输出高电平
+	可以看到Pioneer 600扩展板的LED2点亮
+	读IO管脚：
+	i2cget  -y 1 0x20
+
+	运行这条命令即可读取PCF8574 IO管脚状态
+	熄灭LED2
+	i2cset –y 1 0x20 0xFF
+
+
+	同理,Pionerr 600扩展板，蜂鸣器接到PCF8574的P7管脚，可以用i2c-tool控制蜂鸣器
+	蜂鸣器响：
+	i2cset –y 1 0x20 0x7F
+
+	蜂鸣器停：
+	i2cset –y 1 0x20 0xFF
+
+			
+
+			
+			
+			
