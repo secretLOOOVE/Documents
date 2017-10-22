@@ -293,11 +293,34 @@ shell控制GPIO
     echo setting pi high  
     echo 1 > /sys/class/gpio/gpio$1/value  
 
+### 树莓派入门教程——开启SPI和I2C功能
+
+	树莓派默认是将SPI和I2C功能关闭的，如果你编写SPI的程序，但是SPI模块没打开，可能会出现如下错误：
+	ERROR: could not insert 'spi_bcm2708': No such device
+	下面我们就针对如何开启SPI功能做下简单的说明，当然开启其他功能也是完全一样的。
+
+	在终端输入
+	sudo raspi-config
+	命令，然后按照下图顺序依次操作即可，配置完成后重启树莓派即可生效。
+	 
+
+	若运行SPI程序出现如下错误
+	Unable to open SPI device: No such file or directory
+	则有可能是SPI模块并没有成功导入，用lsmod命令可以参看是否成功导入SPI模块
+
+	若执行I2C相关程序出现如下错误
+	Unable to open I2C device: No such file or directory
+	用lsmod命令可以看到i2c_bmc2708字样，但是没i2c_dev字样，那么还需要做如下处理
+	执行命令
+	sudo nano /etc/modules                # 使用nano打开文件
+	然后增加
+	i2c_dev
+	行，安Ctrl+X退出编辑，输入Y保存内容，然后重启即可。
+	 
 
 
+		
 
-    
-
-    
-    
-    
+		
+		
+		
