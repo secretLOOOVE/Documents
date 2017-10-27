@@ -1988,3 +1988,119 @@ a descriptive name.
 　　这些级别在/etc/inittab 文件里指定。这个文件是init 程序寻找的主要文件，最先运行的服务是放在/etc/rc.d
 	目录下的文件。在大多数的Linux 发行版本中，启动脚本都是位于 /etc/rc.d/init.d中的。这些脚本被用ln 命令连接到 /etc/rc.d/rcn.d
 	目录。(这里的n 就是运行级0-6)
+
+### Debian
+
+	Debian GNU/Linux
+
+	版本记录
+	Debian的发行及其软件源有五个分支：旧稳定分支（oldstable）、稳定分支（stable）、测试分支（testing）、不稳定分支（unstable）、实验分支（experimental）。
+	当前的稳定分支即Jessie（即下一个旧稳定分支），所有开发代号均出自Pixar的电影《玩具总动员》。
+
+	软件管理
+
+	一，APT以及dpkg常见用法如下：
+APT——Advanced Package Tool  
+
+功能| 具体语句
+---|---
+软件源设置| /etc/apt/sources.list
+更新软件源数据| apt-get update
+更新已安装软件| apt-get upgrade
+更新系统版本| apt-get dist-upgrade
+通过安装包或卸载包来修复依赖错误| apt-get -f install
+搜索软件源数据| apt-cache search foo
+解压安装软件包| apt-get install foo
+重新安装软件包|	apt-get --reinstall install foo
+删除软件包释放的内容| apt-get remove foo
+卸载软件，同时清除该软件配置文件| apt-get --purge remove foo
+删除不需要的包| apt-get autoclean
+删除所有已下载的包| apt-get clean
+自动安装编译一软件所需要的包| apt-get build-dep foo
+
+dpkg——package manager for Debian
+
+功能| 具体语句
+----|----
+显示DEB包信息| dpkg -I xx.deb
+显示DEB包文件列表| dpkg -c xx.deb
+安装DEB包| dpkg -i xx.deb
+安装DEB包（指定根目录）|	dpkg --root=<directory> -i xx.deb
+显示所有已安装软件| dpkg -l
+显示已安装包信息| dpkg -s foo
+显示已安装包文件列表| dpkg -L foo
+卸载包| dpkg -r foo
+卸载软件包并删除其配置文件| dpkg -P foo
+重新配置已安装程序| dpkg-reconfigure foo
+
+从软件源中编译软件流程（适用于少量代码改动或者配置修改）
+
+功能| 具体语句| 示例
+---|----------|----
+获取源码| apt-get source foo| apt-get source rox-filer
+安装编译依赖| apt-get build-dep foo| apt-get build-dep rox-filer
+解压源码| dpkg-source -x foo_version-revision.dsc| dpkg-source -x rox_2.11-3.dsc
+修改源码部分|| nano ROX-Filer/src/main.c
+创建包| dpkg-buildpackage -rfakeroot -b|
+修改软件可升级状态 |echo -e "foo hold"&#124;dpkg --set-selections|
+
+	二，用dpkg解包打包（或者修改包）的简单用法
+	1，新建必要文件control
+	mkdir -p dirname/DEBIAN（dirname名随意，将生成的usr bin lib之类的文件复制到dirname目录下，dirname/为伪根目录）
+	nano dirname/DEBIAN/control，最简陋的格式如下：
+	Package: foo
+	Version: version-revision
+	Architecture: amd64
+	Maintainer: xxx
+	Priority: extra
+	Description: xxx
+	2，生成DEB包
+	dpkg-deb -b --deb-format=2.0 -Zxz -z9 dirname foo_version-revision_arch.deb （为了便于管理包名应遵循DEB包命名格式）
+	3，解压DEB包安装文件部分
+	mkdir newdir && dpkg -x foo_version-revision_arch.deb newdir/
+	4，解压DEB包控制信息部分
+	mkdir newdir && dpkg -e foo_version-revision_arch.deb newdir/
+	5，用ar命令解压DEB包
+	mkdir newdir
+	cd newdir && ar x foo_version-revision_arch.deb
+	三，添加常用软件管理命令简短别名
+	软件管理是一个现代操作系统的基本功能，使用十分频繁，因此有必要设置简短的别名，仅字符界面有效添至~/.profile，仅图形界面有效添至~/.bashrc，比如
+	export LC_MESSAGES=en_US.UTF-8
+	alias a="apt-get install --no-install-recommends"
+	alias b="dpkg-deb -b --deb-format=2.0 -Zxz -z9"
+	alias c="SDCV_PAGER=more sdcv --color -0 -1"
+	alias i="dpkg -i"
+	alias l="dpkg -l | grep"
+	alias la="ls --file-type -a"
+	alias ll="la --time-style=long-iso -lh"
+	alias s="apt-cache search"
+	alias r="apt-get --purge remove"
+	alias u="apt-get update;apt-get upgrade"
+
+	中文设置编辑
+
+	中文显示
+
+	复制常用字体
+	mkdir ~/.fonts && cp simsun.ttc tahoma.ttf tahomabd.ttf unifont.pcf ~/.fonts/
+	终端显示调整
+	编辑 ~/.Xdefaults，添加
+	XTerm*background: grey20
+	XTerm*foreground: white
+	XTerm*faceName: unifont
+	XTerm*utf8Title: true
+	UXTerm*background: grey20
+	UXTerm*foreground: white
+	UXTerm*faceName: unifont
+	UXTerm*utf8Title: true
+
+	中文输入
+	nano ~/.xinitrc，添加
+	export LC_CTYPE=en_US.UTF-8
+	export LC_MESSAGES=zh_CN.UTF-8
+	eval `dbus-launch --sh-syntax --exit-with-session`
+	export XMODIFIERS=@im=fcitx
+	export GTK_IM_MODULE=xim
+	export QT_IM_MODULE=fcitx
+	exec fcitx &
+	nano~/.config/fcitx/profile，启用需要的输入法
