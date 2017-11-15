@@ -2104,3 +2104,40 @@ dpkg——package manager for Debian
 	export QT_IM_MODULE=fcitx
 	exec fcitx &
 	nano~/.config/fcitx/profile，启用需要的输入法
+
+### 几种常见的联网方式
+
+	1，使用ppp拨号上网（ppp依赖libpcap0.8）
+
+	cat > /etc/ppp/peers/wan << EOF
+	user "账号"
+	password "密码"
+	defaultroute
+	hide-password
+	noauth
+	persist
+	plugin rp-pppoe.so eth0
+	usepeerdns
+	EOF
+	ifconfig eth0 up
+	poff -a #断开
+	pon wan #连接
+
+	2，连接无线网络
+
+	3，USB共享联网
+	dhclient usb0
+###	合盖不休眠
+	nano /etc/systemd/logind.conf，添加一行
+	HandleLidSwitch=ignore
+### 自动登录
+
+	以root为例，其余用户类似
+	1，/lib/systemd/system/getty@.service
+	ExecStart=-/sbin/agetty --noclear %I 38400 linux -a root
+	2，/etc/rc.local
+	touch /tmp/X
+	3，/root/.profile
+	[ -f /tmp/X ] && rm /tmp/X && /usr/bin/startx
+	
+
