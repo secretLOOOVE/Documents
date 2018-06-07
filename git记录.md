@@ -18,7 +18,7 @@
 3. ls -a（list-all命令）：显示当前目录下所有的文件，包括隐藏的目录；
 4. cd：切换目录，后接要切换到的目录，例如从c盘切换到d盘；
 5. mkdir（make directory）：创建一个目录，后接目录名，例如在桌面创建一个oxc目录；
-6. touch：创建文件，例如在oxc目录下创建一个a.txt文件
+6. **touch：创建文件，例如在oxc目录下创建一个a.txt文件**
 7. rm（remove）：删除文件，例如删除oxc文件夹下的a.txt文件；
 8. rm -r（remove recursively）：删除目录，例如删除oxc目录；
 9. mv：重命名，格式：mv （空格） 原文件/目录名 （空格） 改的名，例子：修改oxc目录名为ooo；
