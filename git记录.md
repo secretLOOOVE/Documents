@@ -65,6 +65,11 @@
 
 	git config --global user.email "your email" //配置email
 
+	git push origin master时保存用户名和密码：  
+	```
+	git config --global credential.helper store
+
+	```
 	 
  
 ### 利用Git从本地上传到GitHub
