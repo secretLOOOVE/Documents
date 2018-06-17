@@ -45,4 +45,19 @@ python3.5 -m pdb *.py
 * pdb.runcall(*args,**kwds) 调试函数
 * pdb.settrace() 脚本中设置硬断点
 
+#### python中如何使输出不换行
 
+python2.x版本中，使用“，”可使输出不换行：  
+```
+for i in range(0,5):
+	for k in range(0,5):
+		print('*'),
+		k+=1
+	i+=1
+	print(" ")
+```
+
+python 3.x版本输出不换行格式如下：  
+```
+print(x,end="") end=""可使输出不换行
+```
