@@ -61,3 +61,26 @@ python 3.x版本输出不换行格式如下：
 ```
 print(x,end="") end=""可使输出不换行
 ```
+#### python str与bytes之间的转换  
+
+```
+
+
+ # bytes object
+  b = b"example"
+ 
+  # str object
+  s = "example"
+ 
+  # str to bytes
+  bytes(s, encoding = "utf8")
+ 
+  # bytes to str
+  str(b, encoding = "utf-8")
+ 
+  # an alternative method
+  # str to bytes
+  str.encode(s)
+  # bytes to str
+  bytes.decode(b)
+```
